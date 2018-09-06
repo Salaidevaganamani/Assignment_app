@@ -1,12 +1,23 @@
 import { createStore, applyMiddleware } from "redux";
-import productReducer from "../reducers/product";
+import rootReducer from "../reducers";
+import { middleware } from "../navigation/navigate";
 import createSagaMiddleware from "redux-saga";
-import { productsWatcher } from "../sagas/product";
+import {productWatchers} from "../sagas/product";
 
 const sagaMiddleware = createSagaMiddleware();
 
-const store = createStore(productReducer, applyMiddleware(sagaMiddleware));
+const store = createStore(
+    rootReducer,
+    {
+      productState: { 
+        products: [],
+        isLoading: false,
+        filteredProducts:[],
+    }
+    },
+    applyMiddleware(middleware, sagaMiddleware)
+  );
 
-sagaMiddleware.run(productsWatcher);
+sagaMiddleware.run(productWatchers);
 
 export default store;
